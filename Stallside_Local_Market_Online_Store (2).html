@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stallside – Local Market Online Store</title>
+<meta name="description" content="Order fresh produce, baked goods, spices and handmade goods from small local vendors.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* ---------- Design tokens ---------- */
+:root{
+  --bg:#F4F7F5; --surface:#FFFFFF; --ink:#13241F; --muted:#51655F; --line:#D9E2DD;
+  --brand:#0E5A52; --brand-ink:#FFFFFF; --accent:#F2B01E; --accent-ink:#2A1E00;
+  --chili:#C0392B; --ok:#1B7F4B; --shadow:0 1px 2px rgba(19,36,31,.06),0 8px 24px rgba(19,36,31,.07);
+  --font-head:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --font-body:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0C1815; --surface:#13241F; --ink:#E9F2EE; --muted:#9DB3AB; --line:#25403A;
+    --brand:#3CB7A8; --brand-ink:#04201C; --chili:#FF7B6B; --ok:#58D18E; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0C1815; --surface:#13241F; --ink:#E9F2EE; --muted:#9DB3AB; --line:#25403A;
+  --brand:#3CB7A8; --brand-ink:#04201C; --chili:#FF7B6B; --ok:#58D18E; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-head);line-height:1.12;margin:0;letter-spacing:-.01em}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--brand)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:2px solid transparent;border-radius:10px;padding:10px 18px;font-weight:600;background:var(--brand);color:var(--brand-ink);text-decoration:none;transition:transform .12s,filter .12s}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:translateY(1px)}
+.btn.accent{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn.sm{padding:7px 12px;font-size:.9rem;border-radius:8px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* ---------- Awning (signature element) ---------- */
+.awning{--r:14px;--a:var(--chili);--b:#FFF;position:relative;height:calc(var(--r)*1.6);margin-bottom:var(--r);
+  background:repeating-linear-gradient(90deg,var(--a) 0 calc(var(--r)*2),var(--b) calc(var(--r)*2) calc(var(--r)*4))}
+.awning::after{content:"";position:absolute;left:0;right:0;top:100%;height:var(--r);
+  background:
+   radial-gradient(circle at var(--r) 0,var(--a) calc(var(--r) - .5px),transparent var(--r)) 0 0/calc(var(--r)*4) var(--r) repeat-x,
+   radial-gradient(circle at calc(var(--r)*3) 0,var(--b) calc(var(--r) - .5px),transparent var(--r)) 0 0/calc(var(--r)*4) var(--r) repeat-x}
+.awning.small{--r:9px}
+
+/* ---------- Header ---------- */
+header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:color-mix(in oklab,var(--bg) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:14px;height:68px}
+.logo{display:flex;align-items:center;gap:10px;font:800 1.35rem var(--font-head);text-decoration:none;color:var(--ink)}
+.logo svg{width:34px;height:34px}
+.search{flex:1;max-width:460px;margin-left:auto;position:relative}
+.search input{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--line);background:var(--surface);border-radius:12px}
+.search svg{position:absolute;left:12px;top:50%;translate:0 -50%;width:18px;height:18px;color:var(--muted)}
+nav.main{display:flex;gap:4px}
+nav.main a{padding:8px 12px;border-radius:8px;text-decoration:none;color:var(--ink);font-weight:500}
+nav.main a:hover{background:var(--line)}
+.icon-btn{position:relative;display:grid;place-items:center;width:42px;height:42px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface)}
+.icon-btn svg{width:20px;height:20px}
+.count{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;border-radius:10px;background:var(--chili);color:#fff;font:700 .72rem/20px var(--font-body);text-align:center;padding:0 5px}
+@media(max-width:860px){nav.main{display:none}}
+@media(max-width:560px){.logo span{display:none}}
+
+/* ---------- Hero ---------- */
+.hero{padding:0 0 48px;background:linear-gradient(180deg,color-mix(in oklab,var(--accent) 14%,var(--bg)),var(--bg) 70%)}
+.hero .awning{--a:var(--chili);--b:var(--surface)}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;padding-top:36px}
+.hero h1{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800}
+.hero p.lead{margin:18px 0 26px;font-size:1.12rem;color:var(--muted);max-width:52ch}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px}
+.board{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px}
+.board h2{font-size:1.15rem;margin-bottom:10px}
+.board ul{list-style:none;margin:0;padding:0}
+.board li{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px dashed var(--line)}
+.board li:first-child{border-top:0}
+.board .em{font-size:1.7rem;width:46px;height:46px;display:grid;place-items:center;border-radius:12px;background:color-mix(in oklab,hsl(var(--h) 65% 55%) 22%,var(--surface))}
+.board .meta{flex:1;min-width:0}
+.board .meta b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board .meta small{color:var(--muted)}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:28px}}
+
+/* ---------- Sections ---------- */
+section.block{padding:56px 0 8px}
+.head{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.head h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800}
+.head p{color:var(--muted);margin-top:6px;max-width:60ch}
+
+/* Vendors */
+.vendors{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;padding-top:4px}
+.vendor{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.vendor .in{padding:6px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.vendor h3{font-size:1.15rem}
+.vendor p{color:var(--muted);font-size:.93rem}
+.vendor .row{margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;align-items:center;font-size:.88rem;color:var(--muted)}
+
+/* Filters */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:22px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 15px;font-weight:500;font-size:.93rem}
+.chip[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.filters select{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px}
+.filters .push{margin-left:auto}
+.active-vendor{display:inline-flex;gap:8px;align-items:center;background:color-mix(in oklab,var(--accent) 25%,var(--surface));border-radius:999px;padding:5px 6px 5px 14px;font-size:.9rem;font-weight:600}
+.active-vendor button{border:0;background:var(--surface);border-radius:50%;width:24px;height:24px;line-height:1}
+
+/* Products */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.tile{position:relative;height:150px;display:grid;place-items:center;font-size:4rem;background:color-mix(in oklab,hsl(var(--h) 65% 55%) 22%,var(--surface))}
+.tag{position:absolute;top:10px;left:10px;font-size:.74rem;font-weight:700;background:var(--surface);border-radius:999px;padding:3px 10px}
+.tag.low{color:var(--chili)}
+.card .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:4px;flex:1}
+.card .by{border:0;background:none;padding:0;color:var(--muted);font-size:.85rem;text-align:left;text-decoration:underline;text-underline-offset:3px}
+.card h3{font-size:1.05rem}
+.price{font-weight:700;font-size:1.1rem}
+.price small{font-weight:400;color:var(--muted)}
+.card .act{margin-top:auto;padding-top:12px}
+.card .act .btn{width:100%}
+.step{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.step button{width:34px;height:34px;border:0;background:var(--bg);font-size:1.1rem}
+.step span{min-width:34px;text-align:center;font-weight:600}
+.card .act .step{width:100%;justify-content:space-between}
+.empty{grid-column:1/-1;text-align:center;padding:48px 16px;border:2px dashed var(--line);border-radius:14px;color:var(--muted)}
+
+/* Forms */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label,.field legend{font-weight:600;font-size:.92rem}
+.field input,.field select,.field textarea{border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;width:100%}
+.field .err{color:var(--chili);font-size:.85rem;min-height:1em}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.perks{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:12px}
+.perks li{display:flex;gap:12px}
+.perks b{display:block}
+.perks span.d{color:var(--muted);font-size:.93rem}
+.dot{flex:none;width:36px;height:36px;border-radius:10px;background:color-mix(in oklab,var(--accent) 35%,var(--surface));display:grid;place-items:center;font-size:1.1rem}
+
+/* Vendor desk */
+.table{width:100%;border-collapse:collapse;font-size:.93rem}
+.table th,.table td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.table th{color:var(--muted);font-weight:600}
+.scroll{overflow-x:auto}
+.status{font-size:.8rem;font-weight:700;border-radius:999px;padding:3px 10px;background:color-mix(in oklab,var(--accent) 30%,var(--surface))}
+.status.ready{background:color-mix(in oklab,var(--ok) 25%,var(--surface));color:var(--ok)}
+
+/* Drawer & dialog */
+.scrim{position:fixed;inset:0;background:rgba(5,15,12,.5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--surface);z-index:50;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:-10px 0 30px rgba(0,0,0,.2)}
+.drawer.open{transform:none}
+.drawer header{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}
+.drawer header h2{font-size:1.3rem}
+.lines{flex:1;overflow:auto;padding:6px 20px}
+.line{display:flex;gap:12px;padding:14px 0;border-bottom:1px dashed var(--line)}
+.line .em{font-size:1.6rem;width:44px;height:44px;border-radius:10px;display:grid;place-items:center;background:color-mix(in oklab,hsl(var(--h) 65% 55%) 22%,var(--surface));flex:none}
+.line .info{flex:1;min-width:0}
+.line .info small{color:var(--muted);display:block}
+.line .rm{border:0;background:none;color:var(--chili);font-size:.85rem;padding:4px 0}
+.drawer footer{padding:16px 20px;border-top:1px solid var(--line)}
+.sum{display:flex;justify-content:space-between;margin-bottom:6px}
+.sum.total{font-weight:700;font-size:1.15rem;margin:10px 0 14px}
+dialog{border:0;border-radius:18px;padding:0;width:min(560px,calc(100% - 24px));background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(5,15,12,.55)}
+dialog .in{padding:24px;max-height:86vh;overflow:auto}
+dialog h2{font-size:1.5rem;margin-bottom:14px}
+.radio{display:flex;gap:10px;flex-wrap:wrap}
+.radio label{flex:1;min-width:150px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;gap:8px;align-items:center;font-weight:500}
+.radio input{width:auto;accent-color:var(--brand)}
+.ok-mark{width:64px;height:64px;border-radius:50%;background:color-mix(in oklab,var(--ok) 25%,var(--surface));color:var(--ok);display:grid;place-items:center;font-size:2rem;margin-bottom:12px}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));translate:-50% 20px;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:500;opacity:0;pointer-events:none;transition:.2s;z-index:70;max-width:90vw}
+.toast.on{opacity:1;translate:-50% 0}
+
+footer.site{margin-top:72px;border-top:1px solid var(--line);padding:30px 0 40px;color:var(--muted);font-size:.93rem}
+footer.site .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* ---------- Feedback ---------- */
+.stars{display:flex;gap:4px;border:0;padding:0;margin:0}
+.stars input{position:absolute;opacity:0;width:1px;height:1px}
+.stars label{font-size:2rem;line-height:1;cursor:pointer;color:var(--line);transition:color .12s,transform .12s;padding:2px}
+.stars label:hover{transform:scale(1.12)}
+.stars label.on{color:var(--accent)}
+.stars input:focus-visible + label{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.fb-note{color:var(--muted);font-size:.85rem;text-align:right;margin-top:-8px}
+.fb-done{text-align:center;padding:18px 0}
+.fb-done .big{font-size:2.6rem}
+.fb-done h3{font-size:1.4rem;margin:8px 0}
+.fb-done p{color:var(--muted);margin-bottom:16px}
+.fb-recent{list-style:none;margin:16px 0 0;padding:0}
+.fb-recent li{padding:12px 0;border-top:1px dashed var(--line)}
+.fb-recent .meta{display:flex;justify-content:space-between;gap:10px;font-size:.88rem;color:var(--muted)}
+.fb-recent .stars-s{color:var(--accent);letter-spacing:1px}
+.fb-recent p{margin-top:4px}
+footer.site a{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="logo" href="#top" aria-label="Stallside home">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="16" width="32" height="20" rx="3" fill="var(--brand)"/><path d="M3 8h34l3 9H0z" fill="var(--chili)"/><path d="M10 8l-3 9m9-9l-2 9m9-9v9m7-9l2 9m5-9l3 9" stroke="#fff" stroke-width="3"/><rect x="16" y="23" width="8" height="13" rx="1.5" fill="var(--accent)"/></svg>
+      <span>Stallside</span>
+    </a>
+    <nav class="main" aria-label="Primary">
+      <a href="#shop">Shop</a><a href="#vendors">Vendors</a><a href="#sell">Sell</a><a href="#desk">Vendor desk</a><a href="#feedback">Feedback</a>
+    </nav>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <label class="sr" for="q">Search products</label>
+      <input id="q" type="search" placeholder="Search products or stalls" autocomplete="off">
+    </div>
+    <button class="icon-btn" id="themeBtn" aria-label="Switch colour theme" title="Switch colour theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+    <button class="icon-btn" id="cartBtn" aria-label="Open basket">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 7h13l-1.5 9h-10zM6 7 5 3H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>
+      <span class="count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="awning" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Your neighbourhood market, open all day.</h1>
+        <p class="lead">Order vegetables, fresh bakes, spices and handmade goods straight from small vendors. Pick up at the stall or get it delivered to your door.</p>
+        <div class="cta">
+          <a class="btn accent" href="#shop">Browse products</a>
+          <a class="btn ghost" href="#sell">Start selling</a>
+        </div>
+      </div>
+      <aside class="board" aria-labelledby="freshTitle">
+        <h2 id="freshTitle">Fresh on the stalls today</h2>
+        <ul id="fresh"></ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block" id="vendors">
+    <div class="wrap">
+      <div class="head"><div><h2>Meet the vendors</h2><p>Every stall is run by a local seller. Open a stall to see only what they sell.</p></div></div>
+      <div class="vendors" id="vendorList"></div>
+    </div>
+  </section>
+
+  <section class="block" id="shop">
+    <div class="wrap">
+      <div class="head"><div><h2>Shop the market</h2><p id="resultInfo"></p></div></div>
+      <div class="filters" id="filters">
+        <div id="chips" style="display:flex;flex-wrap:wrap;gap:10px" role="group" aria-label="Categories"></div>
+        <span id="vendorPill"></span>
+        <label class="push sr" for="sort">Sort products</label>
+        <select id="sort" class="push">
+          <option value="featured">Sort: Featured</option>
+          <option value="low">Price: low to high</option>
+          <option value="high">Price: high to low</option>
+          <option value="name">Name: A to Z</option>
+        </select>
+      </div>
+      <div class="grid" id="products" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="block" id="sell">
+    <div class="wrap two">
+      <div>
+        <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800">Sell from your stall, online</h2>
+        <p style="color:var(--muted);margin-top:10px;max-width:50ch">Add your shop and your first product in a minute. No set-up fee. Customers pay you directly at pickup or delivery.</p>
+        <ul class="perks">
+          <li><span class="dot">🏪</span><div><b>Your own stall page</b><span class="d">Customers can browse everything you sell in one place.</span></div></li>
+          <li><span class="dot">📦</span><div><b>Orders in one list</b><span class="d">See what to pack in the vendor desk and mark it ready.</span></div></li>
+          <li><span class="dot">📲</span><div><b>Customers call you</b><span class="d">Order details include the buyer's phone number and address.</span></div></li>
+        </ul>
+      </div>
+      <form class="panel" id="sellForm" novalidate>
+        <div class="cols">
+          <div class="field"><label for="sShop">Shop name</label><input id="sShop" required maxlength="40" placeholder="e.g. Geeta's Dairy"><span class="err"></span></div>
+          <div class="field"><label for="sOwner">Owner name</label><input id="sOwner" required maxlength="40"><span class="err"></span></div>
+        </div>
+        <div class="field"><label for="sPhone">Phone number</label><input id="sPhone" inputmode="numeric" maxlength="10" placeholder="10 digits" required><span class="err"></span></div>
+        <div class="field"><label for="sBlurb">About your stall</label><input id="sBlurb" maxlength="90" placeholder="One line about what you sell"></div>
+        <div class="cols">
+          <div class="field"><label for="pName">Product name</label><input id="pName" required maxlength="40"><span class="err"></span></div>
+          <div class="field"><label for="pCat">Category</label><select id="pCat"></select></div>
+        </div>
+        <div class="cols">
+          <div class="field"><label for="pPrice">Price</label><input id="pPrice" type="number" min="1" step="1" required><span class="err"></span></div>
+          <div class="field"><label for="pUnit">Sold per</label><input id="pUnit" value="kg" maxlength="12"></div>
+        </div>
+        <div class="cols">
+          <div class="field"><label for="pStock">Stock available</label><input id="pStock" type="number" min="1" value="20" required><span class="err"></span></div>
+          <div class="field"><label for="pEmoji">Picture</label>
+            <select id="pEmoji"><option>🥬</option><option>🍅</option><option>🍎</option><option>🥛</option><option>🍞</option><option>🍪</option><option>🌶️</option><option>🍯</option><option>🧺</option><option>🏺</option><option>👕</option><option>🧵</option><option>🪔</option><option>🌸</option></select></div>
+        </div>
+        <button class="btn" type="submit" style="width:100%">Add to the market</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="block" id="desk">
+    <div class="wrap">
+      <div class="head">
+        <div><h2>Vendor desk</h2><p>Choose your stall to see your products and incoming orders.</p></div>
+        <div class="field" style="margin:0;min-width:220px"><label for="deskVendor" class="sr">Vendor</label><select id="deskVendor"></select></div>
+      </div>
+      <div class="two">
+        <div class="panel"><h3 style="margin-bottom:10px">Orders to pack</h3><div class="scroll" id="deskOrders"></div></div>
+        <div class="panel"><h3 style="margin-bottom:10px">Your products</h3><div class="scroll" id="deskProducts"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="feedback">
+    <div class="wrap">
+      <div class="head">
+        <div><h2>Share your feedback</h2><p>Tell us what's working and what isn't. Every note helps us improve Stallside for shoppers and vendors.</p></div>
+      </div>
+      <div class="two">
+        <div class="panel" id="fbPanel">
+          <form id="fbForm" novalidate>
+            <div class="field">
+              <label id="fbRateLbl">How was your experience?</label>
+              <div class="stars" id="fbStars" role="radiogroup" aria-labelledby="fbRateLbl"></div>
+              <span class="err" id="fbRateErr"></span>
+            </div>
+            <div class="field"><label for="fbType">Feedback about</label>
+              <select id="fbType"><option>Shopping &amp; products</option><option>Vendors &amp; stalls</option><option>Checkout &amp; delivery</option><option>Website experience</option><option>Suggestion / new idea</option><option>Something else</option></select></div>
+            <div class="field"><label for="fbMsg">Your message</label><textarea id="fbMsg" rows="4" maxlength="500" placeholder="What can we do better?" required></textarea><span class="err"></span></div>
+            <div class="fb-note"><span id="fbCount">0</span>/500</div>
+            <div class="field"><label for="fbName">Name <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input id="fbName" maxlength="50" autocomplete="name"></div>
+            <div class="field"><label for="fbEmail">Email <span style="font-weight:400;color:var(--muted)">(optional, if you'd like a reply)</span></label><input id="fbEmail" type="email" maxlength="80" autocomplete="email"><span class="err"></span></div>
+            <button class="btn accent" type="submit" style="width:100%">Send feedback</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>Recent feedback</h3>
+          <ul class="fb-recent" id="fbList"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site"><div class="wrap"><span><b style="color:var(--ink)">Stallside</b> · a marketplace for small local vendors</span><span><a href="#feedback">Send feedback</a> · Demo build: data is saved in this browser only.</span></div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="cart" aria-label="Basket" inert>
+  <header><h2>Your basket</h2><button class="icon-btn" id="cartClose" aria-label="Close basket">✕</button></header>
+  <div class="lines" id="cartLines"></div>
+  <footer>
+    <div class="sum total"><span>Subtotal</span><span id="cartSub">₹0</span></div>
+    <button class="btn accent" id="checkoutBtn" style="width:100%">Go to checkout</button>
+  </footer>
+</aside>
+
+<dialog id="checkoutDlg" aria-labelledby="coTitle">
+  <div class="in" id="coBody"></div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================
+   Stallside – local market store (vanilla JS, single file)
+   Change CURRENCY / DELIVERY settings below to suit your area.
+   ========================================================= */
+const CURRENCY = "₹";
+const DELIVERY_FEE = 30;          // flat fee for home delivery
+const FREE_DELIVERY_ABOVE = 500;  // free delivery over this subtotal
+
+const CATEGORIES = [
+  { id: "veg",     name: "Fruits & vegetables", h: 140 },
+  { id: "bakery",  name: "Bakery & snacks",     h: 32  },
+  { id: "spice",   name: "Spices & pantry",     h: 8   },
+  { id: "craft",   name: "Handmade & home",     h: 205 },
+  { id: "cloth",   name: "Clothing & textiles", h: 285 }
+];
+
+const SEED_VENDORS = [
+  { id: "v1", name: "Lakshmi Fresh Greens", owner: "Lakshmi", phone: "9800000001", blurb: "Farm-fresh vegetables picked every morning.", a: "#2E8B57", b: "#F7F7F2" },
+  { id: "v2", name: "Anand Bakery",         owner: "Anand",   phone: "9800000002", blurb: "Bread, buns and tea-time snacks baked daily.", a: "#C0392B", b: "#FFF4E0" },
+  { id: "v3", name: "Ravi Spice Corner",    owner: "Ravi",    phone: "9800000003", blurb: "Ground-to-order masalas, pulses and honey.", a: "#E08A00", b: "#FFF7E6" },
+  { id: "v4", name: "Meena Handlooms",      owner: "Meena",   phone: "9800000004", blurb: "Cotton wear and textiles from local weavers.", a: "#7B4FB0", b: "#F5EFFA" },
+  { id: "v5", name: "Kumar Clay Works",     owner: "Kumar",   phone: "9800000005", blurb: "Hand-thrown pots, lamps and kitchenware.", a: "#B5532F", b: "#FBEFE8" },
+  { id: "v6", name: "Fatima's Pickles",     owner: "Fatima",  phone: "9800000006", blurb: "Small-batch pickles and preserves from home.", a: "#1F7A8C", b: "#EAF6F8" }
+];
+
+const SEED_PRODUCTS = [
+  { id: "p1",  vendor: "v1", name: "Tomatoes",           cat: "veg",    price: 40,  unit: "kg",     emoji: "🍅", stock: 40 },
+  { id: "p2",  vendor: "v1", name: "Spinach bunch",      cat: "veg",    price: 20,  unit: "bunch",  emoji: "🥬", stock: 25 },
+  { id: "p3",  vendor: "v1", name: "Bananas",            cat: "veg",    price: 55,  unit: "dozen",  emoji: "🍌", stock: 6 },
+  { id: "p4",  vendor: "v2", name: "Soft milk bread",    cat: "bakery", price: 45,  unit: "loaf",   emoji: "🍞", stock: 30 },
+  { id: "p5",  vendor: "v2", name: "Butter biscuits",    cat: "bakery", price: 90,  unit: "pack",   emoji: "🍪", stock: 18 },
+  { id: "p6",  vendor: "v2", name: "Veg puffs",          cat: "bakery", price: 15,  unit: "piece",  emoji: "🥐", stock: 50 },
+  { id: "p7",  vendor: "v3", name: "Turmeric powder",    cat: "spice",  price: 70,  unit: "250 g",  emoji: "🌿", stock: 35 },
+  { id: "p8",  vendor: "v3", name: "Red chilli powder",  cat: "spice",  price: 85,  unit: "250 g",  emoji: "🌶️", stock: 28 },
+  { id: "p9",  vendor: "v3", name: "Forest honey",       cat: "spice",  price: 320, unit: "500 g",  emoji: "🍯", stock: 4 },
+  { id: "p10", vendor: "v4", name: "Cotton towel",       cat: "cloth",  price: 180, unit: "piece",  emoji: "🧺", stock: 15 },
+  { id: "p11", vendor: "v4", name: "Handloom kurta",     cat: "cloth",  price: 749, unit: "piece",  emoji: "👕", stock: 9 },
+  { id: "p12", vendor: "v5", name: "Clay water pot",     cat: "craft",  price: 260, unit: "piece",  emoji: "🏺", stock: 12 },
+  { id: "p13", vendor: "v5", name: "Diya set of 6",      cat: "craft",  price: 120, unit: "set",    emoji: "🪔", stock: 22 },
+  { id: "p14", vendor: "v6", name: "Mango pickle",       cat: "spice",  price: 150, unit: "jar",    emoji: "🥭", stock: 16 },
+  { id: "p15", vendor: "v6", name: "Lemon pickle",       cat: "spice",  price: 130, unit: "jar",    emoji: "🍋", stock: 3 },
+  { id: "p16", vendor: "v1", name: "Fresh coriander",    cat: "veg",    price: 15,  unit: "bunch",  emoji: "🌱", stock: 30 }
+];
+
+/* ---------- Storage helpers (always guarded) ---------- */
+const store = {
+  get(k, d){ try { const v = localStorage.getItem("stallside:" + k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem("stallside:" + k, JSON.stringify(v)); } catch(e){} }
+};
+
+/* ---------- State ---------- */
+const state = {
+  customVendors: store.get("vendors", []),
+  customProducts: store.get("products", []),
+  stockLeft: store.get("stock", {}),   // productId -> remaining stock after orders
+  cart: store.get("cart", {}),         // productId -> quantity
+  orders: store.get("orders", []),
+  filter: { q: "", cat: "all", vendor: null, sort: "featured" },
+  deskVendor: null
+};
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const money = n => CURRENCY + Number(n).toLocaleString("en-IN");
+const vendors = () => [...SEED_VENDORS, ...state.customVendors];
+const allProducts = () => [...SEED_PRODUCTS, ...state.customProducts].map(p => ({ ...p, stock: p.id in state.stockLeft ? state.stockLeft[p.id] : p.stock }));
+const getVendor = id => vendors().find(v => v.id === id);
+const getProduct = id => allProducts().find(p => p.id === id);
+const catOf = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[0];
+const persist = () => { store.set("vendors", state.customVendors); store.set("products", state.customProducts); store.set("stock", state.stockLeft); store.set("cart", state.cart); store.set("orders", state.orders); };
+
+let toastTimer;
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 2200); }
+
+/* ---------- Rendering: hero ---------- */
+function renderFresh(){
+  const picks = allProducts().filter(p => p.stock > 0).slice(0, 4);
+  $("#fresh").innerHTML = picks.map(p => `
+    <li>
+      <span class="em" style="--h:${catOf(p.cat).h}">${p.emoji}</span>
+      <span class="meta"><b>${esc(p.name)}</b><small>${esc(getVendor(p.vendor)?.name || "")}</small></span>
+      <span class="price">${money(p.price)}</span>
+    </li>`).join("");
+}
+
+/* ---------- Rendering: vendors ---------- */
+function renderVendors(){
+  const prods = allProducts();
+  $("#vendorList").innerHTML = vendors().map(v => {
+    const n = prods.filter(p => p.vendor === v.id).length;
+    return `
+    <article class="vendor">
+      <div class="awning small" style="--a:${esc(v.a)};--b:${esc(v.b)}" aria-hidden="true"></div>
+      <div class="in">
+        <h3>${esc(v.name)}</h3>
+        <p>${esc(v.blurb || "Local vendor")}</p>
+        <div class="row"><span>${n} product${n === 1 ? "" : "s"}</span>
+          <button class="btn sm ghost" data-act="open-stall" data-id="${v.id}">Open stall</button></div>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+/* ---------- Rendering: filters + products ---------- */
+function renderChips(){
+  const chips = [{ id: "all", name: "All" }, ...CATEGORIES];
+  $("#chips").innerHTML = chips.map(c => `<button class="chip" data-act="cat" data-id="${c.id}" aria-pressed="${state.filter.cat === c.id}">${esc(c.name)}</button>`).join("");
+  const v = state.filter.vendor && getVendor(state.filter.vendor);
+  $("#vendorPill").innerHTML = v ? `<span class="active-vendor">${esc(v.name)} <button data-act="clear-vendor" aria-label="Show all vendors">✕</button></span>` : "";
+}
+
+function visibleProducts(){
+  const { q, cat, vendor, sort } = state.filter;
+  const term = q.trim().toLowerCase();
+  let list = allProducts().filter(p => {
+    if (cat !== "all" && p.cat !== cat) return false;
+    if (vendor && p.vendor !== vendor) return false;
+    if (term && !(p.name.toLowerCase().includes(term) || (getVendor(p.vendor)?.name || "").toLowerCase().includes(term))) return false;
+    return true;
+  });
+  if (sort === "low") list.sort((a, b) => a.price - b.price);
+  if (sort === "high") list.sort((a, b) => b.price - a.price);
+  if (sort === "name") list.sort((a, b) => a.name.localeCompare(b.name));
+  return list;
+}
+
+function renderProducts(){
+  const list = visibleProducts();
+  $("#resultInfo").textContent = `${list.length} product${list.length === 1 ? "" : "s"} available`;
+  if (!list.length){
+    $("#products").innerHTML = `<div class="empty"><b>No products match your search.</b><br>Try another word or clear the filters.</div>`;
+    return;
+  }
+  $("#products").innerHTML = list.map(p => {
+    const inCart = state.cart[p.id] || 0;
+    const out = p.stock <= 0;
+    const tag = out ? `<span class="tag low">Sold out</span>` : p.stock <= 5 ? `<span class="tag low">Only ${p.stock} left</span>` : "";
+    const action = out ? `<button class="btn ghost" disabled>Sold out</button>`
+      : inCart ? `<div class="step"><button data-act="dec" data-id="${p.id}" aria-label="Remove one ${esc(p.name)}">−</button><span>${inCart}</span><button data-act="inc" data-id="${p.id}" aria-label="Add one ${esc(p.name)}">+</button></div>`
+      : `<button class="btn" data-act="add" data-id="${p.id}">Add to basket</button>`;
+    return `
+    <article class="card">
+      <div class="tile" style="--h:${catOf(p.cat).h}"><span aria-hidden="true">${p.emoji}</span>${tag}</div>
+      <div class="body">
+        <button class="by" data-act="open-stall" data-id="${p.vendor}">${esc(getVendor(p.vendor)?.name || "")}</button>
+        <h3>${esc(p.name)}</h3>
+        <p class="price">${money(p.price)} <small>/ ${esc(p.unit)}</small></p>
+        <div class="act">${action}</div>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+/* ---------- Cart ---------- */
+function cartLines(){
+  return Object.entries(state.cart).map(([id, qty]) => ({ p: getProduct(id), qty })).filter(l => l.p && l.qty > 0);
+}
+const cartSubtotal = () => cartLines().reduce((s, l) => s + l.p.price * l.qty, 0);
+
+function changeQty(id, delta){
+  const p = getProduct(id); if (!p) return;
+  const next = (state.cart[id] || 0) + delta;
+  if (next > p.stock){ toast(`Only ${p.stock} of ${p.name} available`); return; }
+  if (next <= 0) delete state.cart[id]; else state.cart[id] = next;
+  if (delta > 0 && next === 1) toast(`${p.name} added to basket`);
+  persist(); renderCart(); renderProducts();
+}
+
+function renderCart(){
+  const lines = cartLines();
+  const count = lines.reduce((s, l) => s + l.qty, 0);
+  $("#cartCount").textContent = count;
+  $("#cartCount").style.display = count ? "" : "none";
+  $("#cartSub").textContent = money(cartSubtotal());
+  $("#checkoutBtn").disabled = !lines.length;
+  $("#cartLines").innerHTML = lines.length ? lines.map(({ p, qty }) => `
+    <div class="line">
+      <span class="em" style="--h:${catOf(p.cat).h}">${p.emoji}</span>
+      <div class="info">
+        <b>${esc(p.name)}</b>
+        <small>${esc(getVendor(p.vendor)?.name || "")} · ${money(p.price)} / ${esc(p.unit)}</small>
+        <div style="display:flex;gap:12px;align-items:center;margin-top:6px">
+          <div class="step"><button data-act="dec" data-id="${p.id}" aria-label="Remove one">−</button><span>${qty}</span><button data-act="inc" data-id="${p.id}" aria-label="Add one">+</button></div>
+          <button class="rm" data-act="remove" data-id="${p.id}">Remove</button>
+        </div>
+      </div>
+      <b>${money(p.price * qty)}</b>
+    </div>`).join("")
+    : `<div class="empty" style="margin-top:20px"><b>Your basket is empty.</b><br>Add something from the stalls to get started.</div>`;
+}
+
+function openCart(open){
+  const d = $("#cart");
+  d.classList.toggle("open", open);
+  d.inert = !open;
+  $("#scrim").classList.toggle("on", open);
+  if (open) $("#cartClose").focus(); else $("#cartBtn").focus();
+}
+
+/* ---------- Checkout ---------- */
+function deliveryFor(mode, sub){ return mode === "delivery" && sub < FREE_DELIVERY_ABOVE ? DELIVERY_FEE : 0; }
+
+function openCheckout(){
+  if (!cartLines().length) return;
+  openCart(false);
+  const sub = cartSubtotal();
+  $("#coBody").innerHTML = `
+    <h2 id="coTitle">Checkout</h2>
+    <form id="coForm" novalidate>
+      <div class="field"><label for="cName">Your name</label><input id="cName" required maxlength="50" autocomplete="name"><span class="err"></span></div>
+      <div class="field"><label for="cPhone">Phone number</label><input id="cPhone" inputmode="numeric" maxlength="10" required autocomplete="tel" placeholder="10 digits"><span class="err"></span></div>
+      <fieldset class="field" style="border:0;padding:0;margin:0 0 14px">
+        <legend>How would you like your order?</legend>
+        <div class="radio">
+          <label><input type="radio" name="mode" value="pickup" checked> Pick up at stall (free)</label>
+          <label><input type="radio" name="mode" value="delivery"> Home delivery (${money(DELIVERY_FEE)}, free over ${money(FREE_DELIVERY_ABOVE)})</label>
+        </div>
+      </fieldset>
+      <div class="field" id="addrField" hidden><label for="cAddr">Delivery address</label><textarea id="cAddr" rows="2" maxlength="200"></textarea><span class="err"></span></div>
+      <div class="field"><label for="cPay">Payment</label><select id="cPay"><option>Cash on pickup or delivery</option><option>UPI on pickup or delivery</option></select></div>
+      <div class="sum"><span>Subtotal</span><span>${money(sub)}</span></div>
+      <div class="sum"><span>Delivery</span><span id="coDel">Free</span></div>
+      <div class="sum total"><span>Total</span><span id="coTotal">${money(sub)}</span></div>
+      <div style="display:flex;gap:10px"><button class="btn ghost" type="button" data-act="close-dlg">Back to shopping</button><button class="btn accent" type="submit" style="flex:1">Place order</button></div>
+    </form>`;
+  const dlg = $("#checkoutDlg"); dlg.showModal();
+  const form = $("#coForm");
+  form.addEventListener("change", () => {
+    const mode = form.mode.value; const fee = deliveryFor(mode, sub);
+    $("#addrField").hidden = mode !== "delivery";
+    $("#coDel").textContent = mode === "pickup" ? "Free" : fee ? money(fee) : "Free";
+    $("#coTotal").textContent = money(sub + fee);
+  });
+  form.addEventListener("submit", e => { e.preventDefault(); placeOrder(form); });
+}
+
+function setErr(input, msg){ const e = input.parentElement.querySelector(".err"); if (e) e.textContent = msg || ""; input.setAttribute("aria-invalid", msg ? "true" : "false"); return !msg; }
+
+function placeOrder(form){
+  const mode = form.mode.value;
+  let ok = true;
+  ok = setErr(form.cName, form.cName.value.trim() ? "" : "Enter your name.") && ok;
+  ok = setErr(form.cPhone, /^\d{10}$/.test(form.cPhone.value.trim()) ? "" : "Enter a 10-digit phone number.") && ok;
+  if (mode === "delivery") ok = setErr(form.cAddr, form.cAddr.value.trim().length >= 8 ? "" : "Enter your full delivery address.") && ok;
+  if (!ok) return;
+
+  const lines = cartLines();
+  // Re-check stock before confirming
+  for (const l of lines){ if (l.qty > l.p.stock){ toast(`${l.p.name}: only ${l.p.stock} left. Update your basket.`); return; } }
+  const sub = cartSubtotal(), fee = deliveryFor(mode, sub);
+  const order = {
+    id: "SS-" + Date.now().toString(36).toUpperCase().slice(-6),
+    date: new Date().toISOString(),
+    customer: form.cName.value.trim(), phone: form.cPhone.value.trim(),
+    mode, address: mode === "delivery" ? form.cAddr.value.trim() : "",
+    payment: form.cPay.value, subtotal: sub, fee, total: sub + fee,
+    items: lines.map(l => ({ pid: l.p.id, name: l.p.name, vendor: l.p.vendor, price: l.p.price, unit: l.p.unit, qty: l.qty })),
+    ready: {}
+  };
+  lines.forEach(l => { state.stockLeft[l.p.id] = l.p.stock - l.qty; });
+  state.orders.unshift(order); state.cart = {};
+  persist(); renderAll();
+  $("#coBody").innerHTML = `
+    <div class="ok-mark" aria-hidden="true">✓</div>
+    <h2 id="coTitle">Order placed</h2>
+    <p style="color:var(--muted);margin-bottom:14px">Thank you, ${esc(order.customer)}. Your order number is <b style="color:var(--ink)">${order.id}</b>. Vendors will contact you on ${esc(order.phone)} if anything changes.</p>
+    <div class="sum total"><span>Total to pay</span><span>${money(order.total)}</span></div>
+    <p style="color:var(--muted);margin-bottom:16px">${order.mode === "pickup" ? "Collect your items from each stall." : "We'll deliver to: " + esc(order.address)}</p>
+    <button class="btn" data-act="close-dlg" style="width:100%">Continue shopping</button>`;
+}
+
+/* ---------- Sell form ---------- */
+function setupSellForm(){
+  $("#pCat").innerHTML = CATEGORIES.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join("");
+  $("#sellForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const f = e.target; let ok = true;
+    const shop = $("#sShop"), owner = $("#sOwner"), phone = $("#sPhone"), name = $("#pName"), price = $("#pPrice"), stock = $("#pStock");
+    ok = setErr(shop, shop.value.trim() ? "" : "Enter your shop name.") && ok;
+    ok = setErr(owner, owner.value.trim() ? "" : "Enter the owner's name.") && ok;
+    ok = setErr(phone, /^\d{10}$/.test(phone.value.trim()) ? "" : "Enter a 10-digit phone number.") && ok;
+    ok = setErr(name, name.value.trim() ? "" : "Enter a product name.") && ok;
+    ok = setErr(price, Number(price.value) > 0 ? "" : "Enter a price above 0.") && ok;
+    ok = setErr(stock, Number(stock.value) >= 1 ? "" : "Enter how many you have.") && ok;
+    if (!ok) return;
+
+    let v = vendors().find(x => x.name.toLowerCase() === shop.value.trim().toLowerCase());
+    if (!v){
+      const palette = [["#2E8B57","#F7F7F2"],["#C0392B","#FFF4E0"],["#7B4FB0","#F5EFFA"],["#1F7A8C","#EAF6F8"],["#E08A00","#FFF7E6"]];
+      const [a, b] = palette[state.customVendors.length % palette.length];
+      v = { id: "c" + Date.now().toString(36), name: shop.value.trim(), owner: owner.value.trim(), phone: phone.value.trim(), blurb: $("#sBlurb").value.trim() || "New local vendor", a, b };
+      state.customVendors.push(v);
+    }
+    state.customProducts.push({ id: "cp" + Date.now().toString(36), vendor: v.id, name: name.value.trim(), cat: $("#pCat").value, price: Math.round(Number(price.value)), unit: $("#pUnit").value.trim() || "piece", emoji: $("#pEmoji").value, stock: Math.round(Number(stock.value)) });
+    persist(); renderAll();
+    name.value = ""; price.value = "";
+    state.deskVendor = v.id; renderDesk();
+    toast("Product listed. Find it in Shop and in the Vendor desk.");
+  });
+}
+
+/* ---------- Vendor desk ---------- */
+function renderDesk(){
+  const sel = $("#deskVendor");
+  if (!state.deskVendor || !getVendor(state.deskVendor)) state.deskVendor = vendors()[0].id;
+  sel.innerHTML = vendors().map(v => `<option value="${v.id}" ${v.id === state.deskVendor ? "selected" : ""}>${esc(v.name)}</option>`).join("");
+  const vid = state.deskVendor;
+
+  const mine = state.orders.map(o => ({ o, items: o.items.filter(i => i.vendor === vid) })).filter(x => x.items.length);
+  $("#deskOrders").innerHTML = mine.length ? `
+    <table class="table"><thead><tr><th>Order</th><th>Items</th><th>Status</th></tr></thead><tbody>
+    ${mine.map(({ o, items }) => `
+      <tr>
+        <td><b>${o.id}</b><br><small>${esc(o.customer)}<br>${esc(o.phone)}<br>${o.mode === "pickup" ? "Pickup" : "Delivery"}</small></td>
+        <td>${items.map(i => `${i.qty} × ${esc(i.name)}`).join("<br>")}<br><b>${money(items.reduce((s, i) => s + i.price * i.qty, 0))}</b></td>
+        <td>${o.ready[vid] ? `<span class="status ready">Ready</span>` : `<button class="btn sm" data-act="ready" data-order="${o.id}">Mark ready</button>`}</td>
+      </tr>`).join("")}
+    </tbody></table>` : `<div class="empty">No orders yet for this stall.</div>`;
+
+  const prods = allProducts().filter(p => p.vendor === vid);
+  $("#deskProducts").innerHTML = prods.length ? `
+    <table class="table"><thead><tr><th>Product</th><th>Price</th><th>Stock</th><th></th></tr></thead><tbody>
+    ${prods.map(p => `<tr><td>${p.emoji} ${esc(p.name)}</td><td>${money(p.price)}</td><td>${p.stock}</td>
+      <td>${p.id.startsWith("cp") ? `<button class="btn sm ghost" data-act="del-product" data-id="${p.id}">Delete</button>` : ""}</td></tr>`).join("")}
+    </tbody></table>` : `<div class="empty">No products listed yet.</div>`;
+}
+
+/* ---------- Events ---------- */
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-act]"); if (!t) return;
+  const id = t.dataset.id;
+  switch (t.dataset.act){
+    case "add": case "inc": changeQty(id, 1); break;
+    case "dec": changeQty(id, -1); break;
+    case "remove": delete state.cart[id]; persist(); renderCart(); renderProducts(); break;
+    case "cat": state.filter.cat = id; renderChips(); renderProducts(); break;
+    case "open-stall": state.filter.vendor = id; renderChips(); renderProducts(); $("#shop").scrollIntoView({ behavior: "smooth" }); break;
+    case "clear-vendor": state.filter.vendor = null; renderChips(); renderProducts(); break;
+    case "close-dlg": $("#checkoutDlg").close(); break;
+    case "ready": { const o = state.orders.find(x => x.id === t.dataset.order); if (o){ o.ready[state.deskVendor] = true; persist(); renderDesk(); toast("Order marked ready"); } break; }
+    case "del-product": state.customProducts = state.customProducts.filter(p => p.id !== id); delete state.cart[id]; persist(); renderAll(); break;
+  }
+});
+$("#q").addEventListener("input", e => { state.filter.q = e.target.value; renderProducts(); });
+$("#sort").addEventListener("change", e => { state.filter.sort = e.target.value; renderProducts(); });
+$("#deskVendor").addEventListener("change", e => { state.deskVendor = e.target.value; renderDesk(); });
+$("#cartBtn").addEventListener("click", () => openCart(true));
+$("#cartClose").addEventListener("click", () => openCart(false));
+$("#scrim").addEventListener("click", () => openCart(false));
+$("#checkoutBtn").addEventListener("click", openCheckout);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#cart").classList.contains("open")) openCart(false); });
+$("#q").addEventListener("keydown", e => { if (e.key === "Enter") $("#shop").scrollIntoView({ behavior: "smooth" }); });
+
+/* Theme toggle */
+$("#themeBtn").addEventListener("click", () => {
+  const root = document.documentElement;
+  const isDark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = isDark ? "light" : "dark";
+  store.set("theme", root.dataset.theme);
+});
+const savedTheme = store.get("theme", null); if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+
+/* ---------- Boot ---------- */
+function renderAll(){ renderFresh(); renderVendors(); renderChips(); renderProducts(); renderCart(); renderDesk(); }
+
+/* ---------- Feedback ---------- */
+const fb = { rating: 0, items: store.get("feedback", []) };
+function setupFeedback(){
+  const box = $("#fbStars");
+  box.innerHTML = [1,2,3,4,5].map(n => `<input type="radio" name="fbRate" id="fbR${n}" value="${n}"><label for="fbR${n}" title="${n} star${n>1?"s":""}" aria-label="${n} star${n>1?"s":""}">★</label>`).join("");
+  const paint = n => box.querySelectorAll("label").forEach((l, i) => l.classList.toggle("on", i < n));
+  box.addEventListener("change", e => { fb.rating = Number(e.target.value); paint(fb.rating); $("#fbRateErr").textContent = ""; });
+  box.querySelectorAll("label").forEach((l, i) => {
+    l.addEventListener("mouseenter", () => paint(i + 1));
+    l.addEventListener("mouseleave", () => paint(fb.rating));
+  });
+  $("#fbMsg").addEventListener("input", e => { $("#fbCount").textContent = e.target.value.length; });
+  $("#fbForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const msg = $("#fbMsg"), email = $("#fbEmail"); let ok = true;
+    if (!fb.rating){ $("#fbRateErr").textContent = "Please choose a rating."; ok = false; }
+    ok = setErr(msg, msg.value.trim().length >= 5 ? "" : "Please write a few words (at least 5 characters).") && ok;
+    const em = email.value.trim();
+    ok = setErr(email, !em || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) ? "" : "Enter a valid email address.") && ok;
+    if (!ok) return;
+    fb.items.unshift({ id: Date.now(), rating: fb.rating, type: $("#fbType").value, msg: msg.value.trim(), name: $("#fbName").value.trim(), email: em, at: new Date().toISOString() });
+    fb.items = fb.items.slice(0, 50);
+    store.set("feedback", fb.items);
+    renderFeedback();
+    $("#fbPanel").innerHTML = `<div class="fb-done"><div class="big">🙏</div><h3>Thank you!</h3><p>Your feedback has been saved. We read every note.</p><button class="btn ghost" type="button" id="fbAgain">Send another</button></div>`;
+    $("#fbAgain").addEventListener("click", () => location.reload());
+    toast("Feedback sent. Thank you!");
+  });
+  renderFeedback();
+}
+function renderFeedback(){
+  const list = $("#fbList");
+  if (!fb.items.length){ list.innerHTML = `<li style="color:var(--muted)">No feedback yet. Be the first to share a thought.</li>`; return; }
+  list.innerHTML = fb.items.slice(0, 5).map(f => `<li>
+    <div class="meta"><span><span class="stars-s" aria-label="${f.rating} out of 5">${"★".repeat(f.rating)}${"☆".repeat(5 - f.rating)}</span> · ${esc(f.name || "Anonymous")}</span><span>${esc(f.type)}</span></div>
+    <p>${esc(f.msg)}</p></li>`).join("");
+}
+setupSellForm();
+setupFeedback();
+renderAll();
+</script>
+</body>
+</html>
